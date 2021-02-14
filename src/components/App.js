@@ -1,104 +1,87 @@
-import "./styles.css";
-
-// import React, { Component, useState } from "react";
-// import "../styles/App.css";
-
-// const App = () => {
-//   const [renderBall, setRenderBall] = useState(false);  //*
-//   const [x, setX] = useState(0);
-//   const [y, setY] = useState(0);
-//   const [ballPosition,setBallPosition] = useState({
-//     left: "0px",
-//     top: "0px",
-//   });
-//   const reset = () => {};
-//   const renderChoice = () => {};
-
-//   return (
-//     <div className="playground">
-//       <button onClick={reset} className="reset">
-//         Reset
-//       </button>
-//       {renderChoice()}
-//     </div>
-//   );
-// };
-
-// export default App;
-
 import React, { useState, useEffect } from "react";
-
-const App = () => {
-  const [renderBall, setRenderBall] = useState(false); //*
-
+// import "../styles/App.css";
+import "./styles.css";
+// import BallMove from "./BallMove";
+export default function App() {
+  const [timer, setTimer] = useState(0);
+  let [interval, setInt] = useState(0);
   const [ballPosition, setBallPosition] = useState({ left: 0, top: 0 });
-  const updateXY = (x, y) => setBallPosition({ left: x, top: y });
+  useEffect(() => {
+    console.log("useEffect", ballPosition);
+    console.log(interval);
+    if (ballPosition.left === 250 && ballPosition.top === 250) {
+      clearInterval(interval);
+      document.removeEventListener("keydown", handleKey);
+    }
+  }, [ballPosition, interval]);
+  const handleKey = (event) => {
+    console.log("in func");
+    switch (event.key) {
+      case "ArrowRight":
+        setBallPosition((ball) => ({
+          left: ball.left + 5,
+          top: ball.top
+        }));
+        break;
+      case "ArrowDown":
+        setBallPosition((ball) => ({
+          // (console.log(ball))
 
-  const handleListener = () => {
-    switch (event.keyCode) {
-      case 39:
-        updateXY(ballPosition.left + 5, ballPosition.top);
+          left: ball.left,
+          top: ball.top + 5
+        }));
         break;
-      case 40:
-        updateXY(ballPosition.left, ballPosition.top + 5);
+      case "ArrowUp":
+        setBallPosition((ball) => ({
+          top: ball.top - 5,
+          left: ball.left
+        }));
         break;
-      case 37:
-        updateXY(ballPosition.left - 5, ballPosition.top);
-        break;
-      case 38:
-        updateXY(ballPosition.left, ballPosition.top - 5);
+      case "ArrowLeft":
+        setBallPosition((ball) => ({
+          left: ball.left - 5,
+          top: ball.top
+        }));
         break;
       default:
         break;
     }
   };
 
-  // bind ArrowRight keydown event
-  useEffect(() => {
-    const keyListener = document.addEventListener("keydown", handleListener);
-    return () => document.removeEventListener("keydown", handleListener);
-  }, [ballPosition]);
-
-  const renderChoice = () => {
-    setRenderBall(true);
-  };
-  const reset = () => {
-    setRenderBall(false);
-    setBallPosition({ left: 0, top: 0 });
+  const Onclick = () => {
+    console.log(ballPosition, "fk");
+    interval = setInterval(() => {
+      setTimer((t) => t + 1);
+    }, 1000);
+    console.log(interval, "in");
+    document.addEventListener("keydown", handleKey);
+    //  clearInterval(int);
+    // console.log(int),"in";
   };
 
-  const renderBallOrButton = () => {
-    if (renderBall) {
-      return (
-        <>
-          <div
-            className="ball"
-            style={{
-              left: ballPosition.left + "px",
-              top: ballPosition.top + "px",
-              position: "absolute"
-            }}
-          ></div>
-          <button className="reset" onClick={reset}>
-            reset
-          </button>
-        </>
-      );
-    } else {
-      return (
-        <>
-          <button className="start" onClick={renderChoice}>
-            start
-          </button>
-          <button className="reset" onClick={reset}>
-            reset
-          </button>
-        </>
-      );
-    }
+  const renderThings = () => {
+    return (
+      <>
+        <div
+          className="ball"
+          style={{
+            left: ballPosition.left + "px",
+            top: ballPosition.top + "px",
+            position: "absolute"
+          }}
+        ></div>
+        <button className="start" onClick={Onclick}>
+          start
+        </button>
+        <div className="heading-timer">{timer}</div>
+        <div className="hole"></div>
+      </>
+    );
   };
 
-  return <div className="playground">{renderBallOrButton()}</div>;
-};
-
-export default App;
+  return (
+    <>
+      <div className="main">{renderThings()}</div>
+    </>
+  );
+}
