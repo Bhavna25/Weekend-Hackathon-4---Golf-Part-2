@@ -1,87 +1,90 @@
-import React, { useState, useEffect } from "react";
-// import "../styles/App.css";
-import "./styles.css";
-// import BallMove from "./BallMove";
-export default function App() {
-  const [timer, setTimer] = useState(0);
-  let [interval, setInterval] = useState(0);
-  const [ballPosition, setBallPosition] = useState({ left: 0, top: 0 });
+import React, { Component, useEffect, useState } from "react";
+import "../styles/App.css";
+
+const App = () => {
+  const [renderBall, setRenderBall] = useState(false);
+  const [x, setX] = useState(0);
+  const [y, setY] = useState(0);
+  const [ballPosition,setBallPosition] = useState({
+    left: "0px",
+    top: "0px",
+  });
+
+  const handler  = (event)=>{
+    let left1 = Number(ballPosition.left.slice(0,-2));
+    let top1 = Number(ballPosition.top.slice(0,-2));
+      switch(event.keyCode){
+        case 39:
+          setBallPosition({
+            left: `${left1 + 5}px`,
+            top : `${top1}px`,
+          });
+          break;
+        case 40:
+          setBallPosition({
+            left: `${left1}px`,
+            top : `${top1+5}px`,
+          });
+          break;
+        case 38:
+          setBallPosition({
+            left: `${left1}px`,
+            top : `${top1-5}px`,
+          });
+          break;
+        case 37:
+          setBallPosition({
+            left: `${left1 - 5}px`,
+            top : `${top1}px`,
+          });
+           break;
+        default:
+           break;
+      }
+      console.log(ballPosition.left,ballPosition.top);
+    };
+
+
   useEffect(() => {
-    console.log("useEffect", ballPosition);
-    console.log(interval);
-    if (ballPosition.left === 250 && ballPosition.top === 250) {
-      clearInterval(interval);
-      document.removeEventListener("keydown", handleKey);
+    window.addEventListener("keydown", handler);
+    return () => {
+      window.removeEventListener("keydown", handler);
     }
-  }, [ballPosition, interval]);
-  const handleKey = (event) => {
-    console.log("in func");
-    switch (event.key) {
-      case "ArrowRight":
-        setBallPosition((ball) => ({
-          left: ball.left + 5,
-          top: ball.top
-        }));
-        break;
-      case "ArrowDown":
-        setBallPosition((ball) => ({
-          // (console.log(ball))
+  }, [ballPosition]);
+  const buttonClickHandler = () => {
+    setRenderBall(true);
+  };
+  const reset = () => {
+    setBallPosition({
+            left: `0px`,
+            top : `0px`,
+          });
+    setRenderBall(false);
+  };
+  const renderChoice = () => {
+    if(renderBall) {
+      return <div 
+                className = "ball"
+                style = {{
+                  left : ballPosition.left,
+                  top : ballPosition.top,
+                  position :"absolute"
+                }}
 
-          left: ball.left,
-          top: ball.top + 5
-        }));
-        break;
-      case "ArrowUp":
-        setBallPosition((ball) => ({
-          top: ball.top - 5,
-          left: ball.left
-        }));
-        break;
-      case "ArrowLeft":
-        setBallPosition((ball) => ({
-          left: ball.left - 5,
-          top: ball.top
-        }));
-        break;
-      default:
-        break;
+            ></div>
+    }else{
+      return <button className = "start" onClick={buttonClickHandler}>Play</button>
     }
-  };
-
-  const Onclick = () => {
-    console.log(ballPosition, "fk");
-    interval = setInterval(() => {
-      setTimer((t) => t + 1);
-    }, 1000);
-    console.log(interval, "in");
-    document.addEventListener("keydown", handleKey);
-    //  clearInterval(int);
-    // console.log(int),"in";
-  };
-
-  const renderThings = () => {
-    return (
-      <>
-        <div
-          className="ball"
-          style={{
-            left: ballPosition.left + "px",
-            top: ballPosition.top + "px",
-            position: "absolute"
-          }}
-        ></div>
-        <button className="start" onClick={Onclick}>
-          start
-        </button>
-        <div className="heading-timer">{timer}</div>
-        <div className="hole"></div>
-      </>
-    );
   };
 
   return (
-    <>
-      <div className="main">{renderThings()}</div>
-    </>
+    <div className="playground">
+      <button onClick={reset} className="reset">
+        Reset
+      </button>
+      {renderChoice()}
+    </div>
   );
-}
+};
+
+export default App;
