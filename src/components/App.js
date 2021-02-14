@@ -4,7 +4,7 @@ import "./styles.css";
 // import BallMove from "./BallMove";
 export default function App() {
   const [timer, setTimer] = useState(0);
-  let [interval, setInt] = useState(0);
+  let [interval, setInterval] = useState(0);
   const [ballPosition, setBallPosition] = useState({ left: 0, top: 0 });
   useEffect(() => {
     console.log("useEffect", ballPosition);
